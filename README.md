@@ -1,4 +1,4 @@
-# Otis
+# Products Scraper
 
 ![GitHub](https://img.shields.io/github/license/alazsengul/products-scraper)
 ![Python Version](https://img.shields.io/badge/python-3.7-blue)
