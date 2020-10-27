@@ -1,5 +1,4 @@
 import requests
-from bs4 import BeautifulSoup
 from src.scraping import request_url
 
 # ------------------------------------------------------------------------------

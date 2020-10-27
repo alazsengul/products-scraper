@@ -48,9 +48,9 @@ def request_url(url):
 
     request = requests.get(url, headers = headers)
 
-    if request.status_code > 500:
-        print(f"Request to page {url} failed.")
-        return None
+    # if request.status_code > 500:
+    #     print(f"Request to page {url} failed.")
+    #     return None
 
     return request
 
