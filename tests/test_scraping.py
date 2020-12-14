@@ -1,7 +1,7 @@
 from src.scraping import request_url, AmazonImage, construct_amazon_url, scrape_amazon
 
 # ------------------------------------------------------------------------------
-# TESTS FUNCTIONS FROM ../src/scraping.py
+# TEST FUNCTIONS FROM ../src/scraping.py
 
 def test_valid_url():
 
@@ -39,8 +39,8 @@ def test_construct_amazon_url():
 def test_scrape_amazon():
 
     try:
-        items = scrape_amazon("weighted blanket", 3)
-        if len(items) != 180:
+        products = scrape_amazon("weighted blanket", 3)
+        if len(products) != 180:
             assert False
     except Exception as e:
         assert type(e).__name__ == 'RobotError'

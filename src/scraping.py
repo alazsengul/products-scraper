@@ -14,12 +14,12 @@ class ScrapingError(Exception):
 def request_url(url):
     """Request a URL.
 
-    Args:
-        url (str): Website url starting with "http".
+    :param str url:
+        Website url starting with ``http``.
 
-    Returns:
-        Response: Response object from requesting URL.
-
+    :rtype: Response
+    :returns:
+        Response object from requesting URL.
     """
 
     headers = {
@@ -38,13 +38,14 @@ def request_url(url):
 def extract_data(extractor, response):
     """Extract relevant data from HTML.
 
-    Args:
-        extractor (Extractor): Extractor object from selectorlib and formatters.
-        response (Response): Response object from requesting a URL.
+    :param Extractor extractor:
+        Extractor object from selectorlib and formatters.
+    :param Response response:
+        Response object from requesting a URL.
 
-    Returns:
-        dict: Extracted data from HTML.
-
+    :rtype: dict
+    :returns:
+        Extracted data from HTML.
     """
 
     return extractor.extract(request.text)
@@ -53,12 +54,12 @@ class AmazonImage(Formatter):
     def format(self, srcset):
         """Get last image (highest quality) from Amazon's various image sizes.
 
-        Args:
-            srcset (str): Comma-separated Amazon image URLs.
+        :param str srcset:
+            Comma-separated Amazon image URLs.
 
-        Returns:
-            str: Last (highest quality) image URL from comma-separated srcset.
-
+        :rtype: str
+        :returns:
+            Last (highest quality) image URL from comma-separated srcset.
         """
 
         return srcset.split(", ")[-1].split()[0]
@@ -66,14 +67,16 @@ class AmazonImage(Formatter):
 def construct_amazon_url(search_query, page_number, time_stamp=int(time.time())):
     """Construct an Amazon search query URL.
 
-    Args:
-        search_query (str): Raw search query.
-        page_number (int): Search result page number.
-        time_stamp (int): Current Unix time stamp.
+    :param str search_query:
+        Raw search query.
+    :param int page_number:
+        Search result page number.
+    :param int time_stamp:
+        Current Unix time stamp.
 
-    Returns:
-        str: Constructed Amazon URL.
-
+    :rtype: str
+    :returns:
+        Constructed Amazon URL.
     """
     
     base_url = "https://www.amazon.com/s?"
@@ -92,15 +95,22 @@ def construct_amazon_url(search_query, page_number, time_stamp=int(time.time()))
 def scrape_amazon(search_query, page_last, page_first=1, pause_time=2):
     """Scrape Amazon products from a search query.
 
-    Args:
-        search_query (str): Raw search query.
-        page_last (int): Last search result page to scrape.
-        page_first (int, optional): First search result page to scrape. Defaults to 1.
-        pause_time (int, optional): Number of seconds to pause between page scrapes. Defaults to 2.
-
-    Returns:
-        list(dict): Scraped Amazon products from search results.
-
+    :param str search_query:
+        Raw search query.
+    :param int page_last:
+        Last search result page to scrape.
+    :param page_first: 
+        First search result page to scrape,
+        defaults to 1
+    :type page_first: int, optional
+    :param pause_time: 
+        Number of seconds to pause between page scrapes,
+        defaults to 2
+    :type pause_time: int, optional
+    
+    :rtype: list(dict)
+    :returns:
+        Scraped Amazon products from search results.
     """
 
     formatters = Formatter.get_all()
