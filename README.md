@@ -4,6 +4,7 @@
 ![GitHub Last Commit](https://img.shields.io/github/last-commit/alazsengul/products-scraper)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/alazsengul/products-scraper/python-app)
 ![Codecov](https://img.shields.io/codecov/c/github/alazsengul/products-scraper)
+![Docs](https://img.shields.io/readthedocs/products-scraper)
 
 Python API that scrapes products across a variety of sites.
 
