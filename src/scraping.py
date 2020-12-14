@@ -48,7 +48,7 @@ def extract_data(extractor, response):
         Extracted data from HTML.
     """
 
-    return extractor.extract(request.text)
+    return extractor.extract(response.text)
 
 class AmazonImage(Formatter):
     def format(self, srcset):
