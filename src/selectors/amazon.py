@@ -1,4 +1,5 @@
 AMAZON_ROBOT_MESSAGE = "Sorry, we just need to make sure you're not a robot."
+
 AMAZON_YML_STRING = """
     products:
         css: 'div[data-component-type="s-search-result"]'

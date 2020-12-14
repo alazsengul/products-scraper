@@ -11,14 +11,16 @@ class RobotError(Exception):
 class ScrapingError(Exception):
     pass
 
-# ------------------------------------------------------------------------------
-# REQUEST URL
-# -> returns requests object
-#
-# url: (STRING) website url starting with http...
-#
-
 def request_url(url):
+    """Request a URL.
+
+    Args:
+        url (str): Website url starting with "http".
+
+    Returns:
+        Response: Response object from requesting URL.
+
+    """
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0",
@@ -29,42 +31,50 @@ def request_url(url):
         "Upgrade-Insecure-Requests": "1"
     }
 
-    request = requests.get(url, headers = headers)
+    response = requests.get(url, headers=headers)
 
-    return request
+    return response
 
-# ------------------------------------------------------------------------------
-# EXTRACT DATA
-# -> returns json of HTML extraction
-#
-# extractor: (OBJECT) selectorlib extractor object
-# request: (OBJECT) requests object
-#
+def extract_data(extractor, response):
+    """Extract relevant data from HTML.
 
-def extract_data(extractor, request):
+    Args:
+        extractor (Extractor): Extractor object from selectorlib and formatters.
+        response (Response): Response object from requesting a URL.
+
+    Returns:
+        dict: Extracted data from HTML.
+
+    """
+
     return extractor.extract(request.text)
 
-# ------------------------------------------------------------------------------
-# Amazon Image Formatter
-# -> returns highest quality image from Amazon's various sizes
-#
-# text: (STRING) comma-separated image urls
-#
-
 class AmazonImage(Formatter):
-    def format(self, text):
-        return text.split(", ")[-1].split()[0]
+    def format(self, srcset):
+        """Get last image (highest quality) from Amazon's various image sizes.
 
-# ------------------------------------------------------------------------------
-# CONSTRUCT AMAZON URL
-# -> returns constructed Amazon URL
-#
-# search_query: (STRING) user's raw search query
-# page_number: (INT) search result page number
-# time_stamp: (INT) current Unix time stamp
-# 
+        Args:
+            srcset (str): Comma-separated Amazon image URLs.
+
+        Returns:
+            str: Last (highest quality) image URL from comma-separated srcset.
+
+        """
+
+        return srcset.split(", ")[-1].split()[0]
 
 def construct_amazon_url(search_query, page_number, time_stamp=int(time.time())):
+    """Construct an Amazon search query URL.
+
+    Args:
+        search_query (str): Raw search query.
+        page_number (int): Search result page number.
+        time_stamp (int): Current Unix time stamp.
+
+    Returns:
+        str: Constructed Amazon URL.
+
+    """
     
     base_url = "https://www.amazon.com/s?"
     query_param = "k=" + "+".join(search_query.split())
@@ -78,24 +88,25 @@ def construct_amazon_url(search_query, page_number, time_stamp=int(time.time()))
         ref_param = "ref=sr_pg_" + str(page_number)
         return base_url + "&".join([query_param, page_param, dt_param, ref_param])
 
-# ------------------------------------------------------------------------------
-# SCRAPE AMAZON
-# -> returns Amazon search results
-#
-# search_query: (STRING) user's raw search query
-# page_last: (INT) last product page number in range to scrape
-# page_first: (INT) first product page number in range to scrape
-# time_delay: (INT) amount of time to pause for before each page request
-#
-
 # TODO: sponsored vs. not sponsored boolean
+def scrape_amazon(search_query, page_last, page_first=1, pause_time=2):
+    """Scrape Amazon products from a search query.
 
-def scrape_amazon(search_query, page_last, page_first=1, time_delay=2):
+    Args:
+        search_query (str): Raw search query.
+        page_last (int): Last search result page to scrape.
+        page_first (int, optional): First search result page to scrape. Defaults to 1.
+        pause_time (int, optional): Number of seconds to pause between page scrapes. Defaults to 2.
+
+    Returns:
+        list(dict): Scraped Amazon products from search results.
+
+    """
 
     formatters = Formatter.get_all()
     amazon_extractor = Extractor.from_yaml_string(AMAZON_YML_STRING, formatters=formatters)
 
-    result = []
+    products = []
 
     for page_index in range(page_first, page_last + 1):
 
@@ -110,11 +121,9 @@ def scrape_amazon(search_query, page_last, page_first=1, time_delay=2):
         if not scraped_data["products"]:
             raise ScrapingError("Amazon was not able to be scraped.")
 
-        result += scraped_data["products"]
+        products += scraped_data["products"]
 
-    return result
+        if page_index < page_last:
+            time.sleep(pause_time)
 
-if __name__ == '__main__':
-    result = scrape_amazon("weighted blanket", 3)
-    print(len(result))
-    print(result)
+    return products

@@ -1,7 +1,7 @@
 from src.scraping import request_url, AmazonImage, construct_amazon_url, scrape_amazon
 
 # ------------------------------------------------------------------------------
-# TESTS REQUEST URL
+# TESTS FUNCTIONS FROM ../src/scraping.py
 
 def test_valid_url():
 
