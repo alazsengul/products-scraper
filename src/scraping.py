@@ -4,6 +4,13 @@ import requests
 import json
 import time
 
+from src.selectors.amazon import AMAZON_ROBOT_MESSAGE, AMAZON_YML_STRING
+
+class RobotError(Exception):
+    pass
+class ScrapingError(Exception):
+    pass
+
 # ------------------------------------------------------------------------------
 # REQUEST URL
 # -> returns requests object
@@ -81,18 +88,27 @@ def construct_amazon_url(search_query, page_number, time_stamp=int(time.time()))
 # time_delay: (INT) amount of time to pause for before each page request
 #
 
+# TODO: sponsored vs. not sponsored boolean
+
 def scrape_amazon(search_query, page_last, page_first=1, time_delay=2):
 
     formatters = Formatter.get_all()
-    amazon_extractor = Extractor.from_yaml_file("selectors/amazon.yml", formatters=formatters)
+    amazon_extractor = Extractor.from_yaml_string(AMAZON_YML_STRING, formatters=formatters)
 
     result = []
 
     for page_index in range(page_first, page_last + 1):
 
-        url_query = construct_amazon_url("weighted blanket", page_index)
+        url_query = construct_amazon_url(search_query, page_index)
         amazon_request = request_url(url_query)
+
+        if AMAZON_ROBOT_MESSAGE in amazon_request.text:
+            raise RobotError("Amazon thought you were a robot, try a different request header.")
+
         scraped_data = extract_data(amazon_extractor, amazon_request)
+
+        if not scraped_data["products"]:
+            raise ScrapingError("Amazon was not able to be scraped.")
 
         result += scraped_data["products"]
 
