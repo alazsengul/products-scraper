@@ -24,8 +24,10 @@ Import the relevant functions from the source directory.
 
 ```python
  >>> from src.scraping import scrape_amazon
- >>> scrape_amazon("weighted blankets", 3)
+ >>> scrape_amazon("weighted blankets", 3) # returns list of products (JSON)
  [...]
+ >>> len(scrape_amazon("weighted blankets", 3)) # 60 Amazon products per page, 3 pages scraped
+ 180
  >>> scrape_amazon("weighted blankets", 3) # can result in RobotError
  RobotError: Amazon thought you were a robot, try a different request header.
 ```
